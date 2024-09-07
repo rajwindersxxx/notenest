@@ -1,0 +1,61 @@
+<%- include("./partials/headers.ejs") %>
+<main class="container" id="new">
+  <div class="form-block">
+    <h2>Update you post </h2>
+  </div>
+  <div class="form-block">
+    <form action="/update" method="post" id="add-form">
+      <label for="book-name" id="name">Book Name:</label>
+      <input type="text" name="name" value="<%= data[0].book_title %>" placeholder="Write the book name" required autofocus="true">
+      <label for="isbn" id="isbn">ISBN Number:</label>
+      <input type="number" name="isbn" value="<%= data[0].isbn_code %>" placeholder="Write book unique code" class="isbn" required>
+      <label for="URL" id="URL">Book Link</label>
+      <input type="text" name="URL" placeholder="Write book link (any online link)" value="<%= data[0].book_url %>" class="url" required>
+      <label for="rating" id="rating">Your Rating:</label>
+      <div id="radio-buttons">
+        <label for="rating">1<input type="radio" name="rating" value="1" <% if (data[0].rating === 1) {%> checked <% } %> required ></label>
+        <label for="rating">2<input type="radio" name="rating" value="2" <% if (data[0].rating === 2) {%> checked <% } %>></label>
+        <label for="rating">3<input type="radio" name="rating" value="3" <% if (data[0].rating === 3) {%> checked <% } %>></label>
+        <label for="rating">4<input type="radio" name="rating" value="4" <% if (data[0].rating === 4) {%> checked <% } %>></label>
+        <label for="rating">5<input type="radio" name="rating" value="5" <% if (data[0].rating === 5) {%> checked <% } %>></label>
+        <label for="rating">6<input type="radio" name="rating" value="6" <% if (data[0].rating === 6) {%> checked <% } %>></label>
+        <label for="rating">7<input type="radio" name="rating" value="7" <% if (data[0].rating === 7) {%> checked <% } %>></label>
+        <label for="rating">8<input type="radio" name="rating" value="8" <% if (data[0].rating === 8) {%> checked <% } %>></label>
+        <label for="rating">9 <input type="radio" name="rating" value="9" <% if (data[0].rating === 9) {%> checked <% } %>></label>
+        <label for="rating">10<input type="radio" name="rating" value="10" <% if (data[0].rating === 20) {%> checked <% } %>></label>
+      </div>
+      <label for="summary" id="nots">Write your Summary: 👇</label>
+      <textarea name="summary"placeholder="Write a Brief Summery" style="height: 150px;"><%= data[0].summary %></textarea>
+      <label for="note" id="nots">Write your nots below: 👇 </label>
+      <textarea name="note" placeholder="Write your content" required><%= data[0].note %></textarea>
+      <input type="hidden" value="<%=data[0].id %>" name="id" >
+      <input type="submit" value="Update Note">
+    </form>
+  </div>
+  <div class="cover">
+    <img src="" alt="cover" width="100%" class="coverURL" style="display: none;">
+  </div>
+</main>
+
+<%- include("./partials/footer.ejs") %>
+<script>
+  const element = document.querySelector(".isbn");
+  element.addEventListener('input', async (event) => {
+    document.querySelector(".coverURL").style.display = "block";
+    const query = event.target.value;
+    const cover_url = `https://covers.openlibrary.org/b/isbn/${query}-L.jpg`;
+    const amazon_link = `https://www.amazon.in/s?k=${query}&i=stripbooks&ref=nb_sb_noss`;
+    document.querySelector(".coverURL").setAttribute("src", cover_url);
+    document.querySelector(".url").value = amazon_link;
+    document.querySelector(".coverURL").onerror = function() {
+      this.style.display = "none";
+    }
+  });
+  window.onload = function() {
+
+  }
+  document.querySelector("#link1").textContent = "Logout";
+  document.querySelector('#link1').setAttribute("href", "/logout");
+  document.querySelector('footer p span').style.display = "none";
+
+</script>

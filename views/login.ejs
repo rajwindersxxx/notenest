@@ -1,0 +1,42 @@
+<link href="./styles/login.css" rel="stylesheet" />
+<%- include ("./partials/headers.ejs") %>
+<main class="container" id="new">
+  <div class="form-block">
+    <h2>Login With Your Account</h2>
+  </div>
+  <div class="form-block">
+    <form action="/login" method="post" id="login-form">
+      <div id="add-form">
+        <label for="username" id="username">Your username</label>
+        <input
+          type="text"
+          name="username"
+          placeholder="Create a username"
+          required
+          autofocus="true"
+        />
+        <label for="password" id="password">Your password:</label>
+        <input
+          type="password"
+          name="password"
+          placeholder="Enter your password"
+          class="isbn"
+          required
+        />
+      </div>
+      <div class="login-button">
+        <input type="submit" value="Login" class="login" />
+      </div>
+    </form>
+    <div class="line"></div>
+    <h2 class="signup">
+      Don't have account , <a href="/signup">SignUp here</a>
+    </h2>
+  </div>
+</main>
+<%- include ("./partials/footer.ejs") %>
+<script>
+  document.querySelector("#link1").textContent = "Home";
+  document.querySelector("#link1").setAttribute("href", "/");
+  document.querySelector('footer p span').style.display = "none";
+</script>

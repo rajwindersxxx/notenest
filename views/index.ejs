@@ -1,0 +1,32 @@
+<%- include("./partials/headers.ejs") %>
+<main class="container" id="index">
+  <div class="form-block">
+    <h1><q>A book is a gift you can open again and again.</q></h1>
+    <h2>Here you can share your experience of reading books</h2>
+    <p class="intro">Tiny summary but detailed notes for each. Use the ISBN number
+      to find it from your local library or anywhere else. This page
+      will constantly update as I read more, so bookmark it if you want to check back in a few months.</p>
+    <p>Sorted with my top recommendations up top. Sort by <a href="/sort?by=title"> Title </a>
+      , <a href="/sort?by=newest"> Newest </a> or <a href="/sort?by=best"> Best </a>.</p>
+  </div>
+  <% if(locals.data){ %>
+  <% for( let i = 0; i < data.length; i++ ) { %>
+  <div class="form-block block2">
+    <div class="line"></div>
+    <div class="content">
+      <a href="/view?id=<%= encodeURIComponent(data[i].id) %>">
+        <h2><%= data[i].book_title %></h2>
+      </a>
+      <p class="review"><em>Date read: <%= data[i].date %>.<%= data[i].rating %>/10 recommended by <span style="color: white"><%= data[i].first_name %></span></em>
+      </p>
+      <div class="cover">
+        <img src="./src/images/<%= data[i].isbn_code %>.jpg" alt="cover" width="100%">
+      </div>
+      <p class="summary"><%= data[i].summary %></p>
+    </div>
+    <p class="links"><a href="/view?id=<%= encodeURIComponent(data[i].id) %>">Read Notes</a> , or go to the <a href="<%= data[i].book_url%>" target="_blank">Amazon page</a> for details and reviews.</p>
+  </div>
+  <% } %>
+  <% } %>
+</main>
+<%- include("./partials/footer.ejs") %>

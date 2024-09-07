@@ -1,0 +1,30 @@
+<%- include("./partials/headers.ejs") %>
+<main class="container" id="view">
+  <div class="form-block" style="background-color: transparent;">
+    <% const i = 0 %>
+    <h1 style="text-transform: capitalize;"><%= data[i].first_name %> <%= data[i].last_name %></h1>
+    <div class="content">
+      <section class="section1">
+        <div class="cover">
+          <img src="./src/images/<%= data[i].isbn_code %>.jpg" alt="cover" width="100%">
+        </div>
+        <h2><%= data[i].book_title %></h2>
+        <ul>
+          <li>ISBN: <%= data[i].isbn_code %></li>
+          <li>Date read: <%= data[i].date %></li>
+          <li>How strongly I recommend it: <%= data[i].rating %>/10</li>
+        </ul>
+      </section>
+      <section class="section2">
+        <p>Go to the <a href="<%= data[i].book_url %>" target="_blank">Amazon page</a> for details and reviews.</p>
+        <P><%= data[i].summary %></P>
+        <h2>My Notes: </h2>
+        <p><%- data[i].note.replace(/\n\r\n/g, "<br><br>").replace(/\n/g, "<br>").replace(/\r/g, ""); %> </p>
+      </section>
+    </div>
+  </div>
+</main>
+<%- include("./partials/footer.ejs") %>
+<script>
+  document.querySelector("footer p span").style.display = "none";
+</script>

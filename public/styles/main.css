@@ -1,0 +1,203 @@
+:root {
+  --color1: #331d2c;
+  --color2: #3f2e3e;
+  --color3: #a78295;
+  --color4: #efe1d1;
+  --color5: #d9d9d9;
+}
+body {
+  background-color: var(--color1);
+  color: var(--color4);
+  margin: 0;
+  font-size: 18px;
+  font-family: "Nunito Sans", sans-serif;
+}
+h1 {
+  font-size: 50px;
+  font-family: "Source Serif 4", serif;
+  color: var(--color3);
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+a {
+  text-decoration: none;
+  color: var(--color4);
+}
+.line {
+  border: 1px solid var(--color4);
+  margin-bottom: 20px;
+}
+nav {
+  position: relative;
+  background-color: var(--color2);
+  height: 60px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--color3);
+}
+a:hover {
+  color: var(--color3);
+}
+nav h1,
+h2 {
+  margin: 0;
+}
+nav h2{
+  font-size: 20px;
+}
+main {
+  margin: auto;
+  padding: 20px;
+  min-height: calc(100vh - 165px);
+}
+.form-block {
+  max-width: 800px;
+  background-color: var(--color2);
+  margin: 10px auto;
+  border-radius: 10px;
+  padding: 20px;
+  
+}
+#index .block2 {
+  min-height: 373px;
+  position: relative;
+}
+#index .form-block h2,
+#new .form-block h2 {
+  text-align: center;
+}
+#new #add-form {
+  display: grid;
+  /* grid-template-rows: repeat(6, 1fr) 420px; */
+  grid-template-columns: 170px auto;
+  gap: 20px;
+  align-items: center;
+}
+#new #nots,
+#new textarea {
+  grid-column: span 2;
+}
+textarea {
+  height: 400px;
+}
+#new input,
+textarea {
+  padding: 10px;
+  border-radius: 10px;
+  background-color: var(--color5);
+}
+#radio-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+#add-form label {
+  font-size: 21px;
+}
+
+#index .form-block h2 {
+  text-align: left;
+}
+#index > div > p:nth-child(4) > a,
+.links a,
+#view a {
+  color: var(--color3);
+}
+#index > div > p:nth-child(4) > a:hover,
+.links a:hover,
+#view a:hover {
+  text-decoration: underline;
+}
+.content h2 {
+  text-decoration: underline;
+  margin-bottom: 0;
+}
+.content h2:hover {
+  color: var(--color3);
+}
+.content .review {
+  text-transform: uppercase;
+  color: var(--color3);
+  font-size: 15px;
+  margin-top: 10px;
+
+}
+#view .cover {
+  height: 187px;
+  width: 125px;
+  margin-right: 2rem;
+  margin-top: 28px;
+  float: left;
+}
+#index .cover {
+  height: 187px;
+  width: 125px;
+  margin-right: 2rem;
+  margin-top: 10px;
+  float: left;
+}
+#new .cover {
+  height: 187px;
+  width: 125px;
+  margin-right: 2rem;
+  margin-top: 10px;
+  position: absolute;
+  top: 100px;
+  right: 10px;
+}
+#index .links {
+  position: absolute;
+  bottom: 10px;
+}
+#view h2 {
+  text-decoration: none;
+  padding-top: 20px;
+  font-size: 40px;
+}
+#view ul li {
+  list-style-type: none;
+  margin: 8px;
+  color: var(--color3);
+}
+.section1 {
+  min-height: 220px;
+}
+footer p {
+  color: var(--color3);
+  text-align: center;
+}
+
+footer .line {
+  border-color: var(--color3);
+}
+
+input[type="submit"]:hover{
+  background-color: var(--color2) !important;
+  color: var(--color4);
+  
+}
+form.buttons{
+  position: absolute;
+  bottom: 30px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+form.buttons input{
+  background-color: var(--color1);
+  color: var(--color4);
+  padding: 5px;
+  border: 1px solid var(--color1);
+  border-radius:5px;
+}
+form.buttons input:hover{
+  background-color: var(--color4) !important;
+  color: var(--color1);
+  cursor: pointer;
+}
+form.button input:active{
+  background-color: var(--color3);
+}

@@ -1,0 +1,74 @@
+<%- include("./partials/headers.ejs") %>
+<style>
+  #index > div:nth-child(1) > p:nth-child(5) > a{
+    color: var(--color3);
+  }
+  #index > div:nth-child(1) > p:nth-child(5) > a:hover{
+    text-decoration: underline;
+  }
+</style>
+<main class="container" id="index">
+  <div class="form-block">
+    <h1 style="text-transform: capitalize">
+      Welcome <%= user.first_name %> <%= user.last_name%>
+    </h1>
+    <h2>Here you can share your experience of reading books</h2>
+    <p class="intro">
+      Tiny summary but detailed notes for each. Use the ISBN number to find it
+      from your local library or anywhere else. This page will constantly update
+      as I read more, so bookmark it if you want to check back in a few months.
+    </p>
+    <p>👉<a href="/new"> Click here </a> To Share your notes</p>
+    <p>
+      Sorted with my top recommendations up top. Sort by
+      <a href="/sortuser?by=title"> Title </a> ,
+      <a href="/sortuser?by=newest"> Newest </a> or
+      <a href="/sortuser?by=best"> Best </a>.
+    </p>
+  </div>
+  <% if(locals.data && locals.data.length > 0){ %> 
+    <% for( let i = 0; i < data.length; i++ ) { %>
+  <div class="form-block block2">
+    <div class="line"></div>
+    <div class="content">
+      <a href="/view?id=<%= encodeURIComponent(data[i].id) %>">
+        <h2><%= data[i].book_title %></h2>
+      </a>
+      <p class="review">
+        <em
+          >Date read: <%= data[i].date %>. How strongly I recommend it: <%=
+          data[i].rating %>/10</em
+        >
+      </p>
+      <div class="cover">
+        <img
+          src="./src/images/<%= data[i].isbn_code %>.jpg"
+          alt="cover"
+          width="100%"
+        />
+      </div>
+      <p class="summary"><%= data[i].summary %></p>
+    </div>
+    <p class="links">
+      <a href="/view?id=<%= encodeURIComponent(data[i].id) %>">Read Notes</a> ,
+      or go to the
+      <a href="<%= data[i].book_url%>" target="_blank">Amazon page</a> for
+      details and reviews.
+    </p>
+    <form class="buttons" action="/edit" method="post">
+      <input type="hidden" value="<%= data[i].id %>" name="id" />
+      <input type="submit" value="edit" name="action">
+      <input type="submit" value="delete" name="action">
+    </form>
+  </div>
+  <% } %> 
+  <% } else{%>
+    <h2 style="margin: 30px; text-align: center; color: var(--color3)">Your post shows here</h2> 
+  <% } %>
+</main>
+<%- include("./partials/footer.ejs") %>
+<script>
+  document.querySelector("#link1").textContent = "Logout";
+  document.querySelector("#link1").setAttribute("href", "/logout");
+  document.querySelector("footer p span").style.display = "none";
+</script>
