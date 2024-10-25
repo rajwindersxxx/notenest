@@ -1,13 +1,18 @@
 
 # My files
 secret.txt
-./public/src/usersUploads/*
+/public/src/usersUploads/**
 # Logs
 logs
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
+yarn-error.log*image feature added
+3 minutes ago
+8172345666.jpg
+image feature added
+3 minutes ago
+
 lerna-debug.log*
 .pnpm-debug.log*
 
