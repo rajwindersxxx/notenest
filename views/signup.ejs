@@ -18,6 +18,11 @@
         <label for="confirm-password" id="confirm-password">Confirm password:</label>
         <input type="password" name="confirm-password" placeholder="rewrite your password" class="input-span" required />
       </div>
+      <% if (typeof message !== 'undefined' && message.length > 0) { %>
+        <div class="alert alert-danger">
+            <%= message %>
+        </div>
+    <% } %>
       <div class="login-button">
         <input type="submit" value="SignUp" class="login" />
       </div>

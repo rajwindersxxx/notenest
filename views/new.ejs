@@ -21,25 +21,18 @@
       <input type="text" name="URL" placeholder="Write book link (any online link)" value="" class="url" required />
       <label for="rating" id="rating">Your Rating:</label>
       <div id="radio-buttons" class="radio-buttons">
-        <label for="rating">1<input type="radio" name="rating" value="1" required /></label>
-        <label for="rating">2<input type="radio" name="rating" value="2" /></label>
-        <label for="rating">3<input type="radio" name="rating" value="3" /></label>
-        <label for="rating">4<input type="radio" name="rating" value="4" /></label>
-        <label for="rating">5<input type="radio" name="rating" value="5" /></label>
-        <label for="rating">6<input type="radio" name="rating" value="6" /></label>
-        <label for="rating">7<input type="radio" name="rating" value="7" /></label>
-        <label for="rating">8<input type="radio" name="rating" value="8" /></label>
-        <label for="rating">9 <input type="radio" name="rating" value="9" /></label>
-        <label for="rating">10<input type="radio" name="rating" value="10" /></label>
+        <% [1, 2, 3,4,5,6,7,8,9,10].forEach(value => { %>
+          <label for="rating<%= value %>">
+            
+            <label for="rating"><%= value %><input type="radio" name="rating" value="<%value%>" <% if (value == 1) { %> required <% } %></label>
+          </label>
+        <% }); %>
       </div>
       <label for="summary" id="nots">Write your Summary: 👇</label>
       <textarea name="summary" placeholder="Write a Brief Summery" style="height: 150px"></textarea>
       <label for="note" id="nots">Write your nots below: 👇 </label>
       <textarea name="note" placeholder="Write your content" required></textarea>
       <input type="submit" value="Submit Your Note" />
-      <div class="cover">
-        <input type="file" id="cover-upload" class="uploadButton" name="coverImage" accept="image/*" style="display: none;" onchange="previewImage(event)">
-      </div>
     </form>
   </div>
 </main>
@@ -50,7 +43,8 @@
   const imgPreviewBlock = document.querySelector('.coverURL');
   const isbnInput = document.querySelector('.isbn');
   const amazonLinkInput = document.querySelector('.url');
-  const hiddenUploadButton = document.querySelector('.uploadButton')
+  const hiddenUploadButton = document.querySelector('.uploadButton');
+
   isbnInput.addEventListener('input', event => {
     const isbn = event.target.value.trim();
     if (!isbn) {
@@ -73,7 +67,7 @@
       }
       return;
     };
-    coverImg.onerror = () => {
+    imgPreviewBlock.onerror = () => {
       imgPreviewBlock.style.display = 'none';
       imageUploadButton.style.display = 'flex';
     };
@@ -95,9 +89,9 @@
     }
   };
 
-  function previewImage(event) {
+  function previewImage(event) { 
     const file = event.target.files[0];
-    console.log(file)
+    
     if (file) {
       const reader = new FileReader();
       reader.onload = function(e) {
@@ -112,6 +106,4 @@
     }
   }
 
-  // Assuming you have an input for file upload
-  document.querySelector('.file-upload').addEventListener('change', previewImage);
 </script>

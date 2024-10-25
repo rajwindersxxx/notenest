@@ -6,34 +6,32 @@
   <div class="form-block">
     <form action="/update" method="post" id="add-form">
       <label for="book-name" id="name">Book Name:</label>
-      <input type="text" name="name" value="<%= data[0].book_title %>" placeholder="Write the book name" required autofocus="true">
+      <input type="text" name="name" value="<%= data[0].book_title %>" placeholder="Write the book name" class="disabled-input" required disabled>
+      <div class="poster-img">
+        <img src="./usersUploads/<%= data[0].isbn_code %>.jpg" alt="coverImage" />
+      </div>
       <label for="isbn" id="isbn">ISBN Number:</label>
-      <input type="number" name="isbn" value="<%= data[0].isbn_code %>" placeholder="Write book unique code" class="isbn" required>
+      <input type="number" name="isbn" value="<%= data[0].isbn_code %>" placeholder="Write book unique code" class="isbn disabled-input" required disabled>
       <label for="URL" id="URL">Book Link</label>
       <input type="text" name="URL" placeholder="Write book link (any online link)" value="<%= data[0].book_url %>" class="url" required>
       <label for="rating" id="rating">Your Rating:</label>
-      <div id="radio-buttons">
-        <label for="rating">1<input type="radio" name="rating" value="1" <% if (data[0].rating === 1) {%> checked <% } %> required ></label>
-        <label for="rating">2<input type="radio" name="rating" value="2" <% if (data[0].rating === 2) {%> checked <% } %>></label>
-        <label for="rating">3<input type="radio" name="rating" value="3" <% if (data[0].rating === 3) {%> checked <% } %>></label>
-        <label for="rating">4<input type="radio" name="rating" value="4" <% if (data[0].rating === 4) {%> checked <% } %>></label>
-        <label for="rating">5<input type="radio" name="rating" value="5" <% if (data[0].rating === 5) {%> checked <% } %>></label>
-        <label for="rating">6<input type="radio" name="rating" value="6" <% if (data[0].rating === 6) {%> checked <% } %>></label>
-        <label for="rating">7<input type="radio" name="rating" value="7" <% if (data[0].rating === 7) {%> checked <% } %>></label>
-        <label for="rating">8<input type="radio" name="rating" value="8" <% if (data[0].rating === 8) {%> checked <% } %>></label>
-        <label for="rating">9 <input type="radio" name="rating" value="9" <% if (data[0].rating === 9) {%> checked <% } %>></label>
-        <label for="rating">10<input type="radio" name="rating" value="10" <% if (data[0].rating === 20) {%> checked <% } %>></label>
+      <div id="radio-buttons" class="input-span">
+        <% [1, 2, 3,4,5,6,7,8,9,10].forEach(value => { %>
+          <label for="rating<%= value %>">
+            <%= value %>
+            <input type="radio" id="rating<%= value %>" name="rating" value="<%= value %>" <% if (data[0].rating == value) { %> checked <% } %>>
+          </label>
+        <% }); %>
+      
       </div>
       <label for="summary" id="nots">Write your Summary: 👇</label>
-      <textarea name="summary"placeholder="Write a Brief Summery" style="height: 150px;"><%= data[0].summary %></textarea>
+      <textarea name="summary"placeholder="Write a Brief Summery" style="height: 150px;"
+      autofocus="true"><%= data[0].summary %></textarea>
       <label for="note" id="nots">Write your nots below: 👇 </label>
       <textarea name="note" placeholder="Write your content" required><%= data[0].note %></textarea>
       <input type="hidden" value="<%=data[0].id %>" name="id" >
       <input type="submit" value="Update Note">
     </form>
-  </div>
-  <div class="cover">
-    <img src="" alt="cover" width="100%" class="coverURL" style="display: none;">
   </div>
 </main>
 

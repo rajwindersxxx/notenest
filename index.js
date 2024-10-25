@@ -15,7 +15,6 @@ const port = 3001;
 const saltRounds = 10;
 env.config();
 
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -40,18 +39,18 @@ const db = new pg.Client({
   port: process.env.PG_PORT,
 });
 db.connect();
-
+const maxSize = 100 * 1024;
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/usersUploads')
+    cb(null, "public/usersUploads");
   },
   filename: function (req, file, cb) {
     // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    cb(null, `${req.body.isbn}` + path.extname(file.originalname)); // Create the custom filename
-  }
-})
+    cb(null, `${req.body.isbn}` + path.extname(file.originalname));
+  },
+});
 
-const upload = multer({ storage: storage })
+const upload = multer({ storage: storage, limits: { fileSize: maxSize } });
 
 let data;
 
@@ -62,7 +61,8 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  res.render("login.ejs");
+  const message = req.query.message || '';
+  res.render('login.ejs', { message });
 });
 
 app.get("/signup", (req, res) => {
@@ -91,7 +91,7 @@ app.post(
   "/login",
   passport.authenticate("local", {
     successRedirect: "/home",
-    failureRedirect: "/login",
+    failureRedirect: "/login?message=username or password is incorrect , try again",
   })
 );
 
@@ -175,7 +175,7 @@ passport.use(
   })
 );
 
-app.post("/add", upload.single('coverImage'),async (req, res) => {
+app.post("/add", upload.single("coverImage"), async (req, res) => {
   const book_name = req.body.name;
   const isbn_code = req.body.isbn;
   const rating = req.body.rating;
@@ -190,7 +190,7 @@ app.post("/add", upload.single('coverImage'),async (req, res) => {
       "INSERT INTO notebook (book_title, isbn_code , rating, book_url, note, summary, date, user_id) VALUES ($1,$2,$3,$4, $5, $6, $7, $8)",
       [book_name, isbn_code, rating, book_url, note, summary, date, user_id]
     );
-    console.log(req.file)
+    console.log(req.file);
     if (!req.file) {
       await download(
         `https://covers.openlibrary.org/b/isbn/${isbn_code}-L.jpg`,
@@ -205,8 +205,6 @@ app.post("/add", upload.single('coverImage'),async (req, res) => {
 });
 
 app.post("/update", async (req, res) => {
-  const book_name = req.body.name;
-  const isbn_code = req.body.isbn;
   const rating = req.body.rating;
   const summary = req.body.summary;
   const note = req.body.note;
@@ -216,10 +214,8 @@ app.post("/update", async (req, res) => {
   const date = currentDate();
   try {
     await db.query(
-      "UPDATE notebook SET book_title = $1, isbn_code = $2, rating = $3, book_url = $4, note = $5, summary = $6, date = $7, user_id = $8 WHERE id = $9",
+      "UPDATE notebook SET  rating = $1, book_url = $2, note = $3, summary = $4, date = $5, user_id = $6 WHERE id = $7",
       [
-        book_name,
-        isbn_code,
         rating,
         book_url,
         note,
@@ -228,10 +224,6 @@ app.post("/update", async (req, res) => {
         user_id,
         note_id,
       ]
-    );
-    await download(
-      `https://covers.openlibrary.org/b/isbn/${isbn_code}-L.jpg`,
-      `./public/usersUploads/${isbn_code}.jpg`
     );
     res.redirect("/home");
   } catch (error) {
@@ -273,6 +265,7 @@ app.get("/sortuser", async (req, res) => {
   }
   res.render("home.ejs", { data: data, user: req.user });
 });
+
 app.post("/edit", async (req, res) => {
   const id = req.body.id;
   const action = req.body.action;
