@@ -1,60 +1,117 @@
 <%- include("./partials/headers.ejs") %>
 <main class="container" id="new">
   <div class="form-block">
-    <h2>Add a your new Review </h2>
+    <h2>Add a your new Review</h2>
   </div>
   <div class="form-block">
-    <form action="/add" method="post" id="add-form">
+    <form action="/add" method="post" id="add-form" enctype="multipart/form-data">
       <label for="book-name" id="name">Book Name:</label>
-      <input type="text" name="name" placeholder="Write the book name" required autofocus="true">
+      <input type="text" name="name" placeholder="Write the book name" required autofocus="true" />
+      <label for="coverImage" class="poster-img cover">
+        <div class="poster-upload" onclick="uploadImage()">
+          <svg xmlns="http://www.w3.org/2000/svg" height="56px" viewBox="0 -960 960 960" width="56px" fill="#e8eaed">
+            <path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+          </svg>
+        </div>
+        <img src="#" alt="cover" width="100%" class="coverURL" style="display: none;" />
+      </label>
       <label for="isbn" id="isbn">ISBN Number:</label>
-      <input type="number" name="isbn" placeholder="Write book unique code" class="isbn" required>
+      <input type="number" name="isbn" placeholder="Write book unique code" class="isbn" required />
       <label for="URL" id="URL">Book Link</label>
-      <input type="text" name="URL" placeholder="Write book link (any online link)" value="" class="url" required>
+      <input type="text" name="URL" placeholder="Write book link (any online link)" value="" class="url" required />
       <label for="rating" id="rating">Your Rating:</label>
-      <div id="radio-buttons">
-        <label for="rating">1<input type="radio" name="rating" value="1" required></label>
-        <label for="rating">2<input type="radio" name="rating" value="2"></label>
-        <label for="rating">3<input type="radio" name="rating" value="3"></label>
-        <label for="rating">4<input type="radio" name="rating" value="4"></label>
-        <label for="rating">5<input type="radio" name="rating" value="5"></label>
-        <label for="rating">6<input type="radio" name="rating" value="6"></label>
-        <label for="rating">7<input type="radio" name="rating" value="7"></label>
-        <label for="rating">8<input type="radio" name="rating" value="8"></label>
-        <label for="rating">9 <input type="radio" name="rating" value="9"></label>
-        <label for="rating">10<input type="radio" name="rating" value="10"></label>
+      <div id="radio-buttons" class="radio-buttons">
+        <label for="rating">1<input type="radio" name="rating" value="1" required /></label>
+        <label for="rating">2<input type="radio" name="rating" value="2" /></label>
+        <label for="rating">3<input type="radio" name="rating" value="3" /></label>
+        <label for="rating">4<input type="radio" name="rating" value="4" /></label>
+        <label for="rating">5<input type="radio" name="rating" value="5" /></label>
+        <label for="rating">6<input type="radio" name="rating" value="6" /></label>
+        <label for="rating">7<input type="radio" name="rating" value="7" /></label>
+        <label for="rating">8<input type="radio" name="rating" value="8" /></label>
+        <label for="rating">9 <input type="radio" name="rating" value="9" /></label>
+        <label for="rating">10<input type="radio" name="rating" value="10" /></label>
       </div>
       <label for="summary" id="nots">Write your Summary: 👇</label>
-      <textarea name="summary" placeholder="Write a Brief Summery" style="height: 150px;"></textarea>
+      <textarea name="summary" placeholder="Write a Brief Summery" style="height: 150px"></textarea>
       <label for="note" id="nots">Write your nots below: 👇 </label>
       <textarea name="note" placeholder="Write your content" required></textarea>
-      <input type="submit" value="Submit Your Note">
+      <input type="submit" value="Submit Your Note" />
+      <div class="cover">
+        <input type="file" id="cover-upload" class="uploadButton" name="coverImage" accept="image/*" style="display: none;" onchange="previewImage(event)">
+      </div>
     </form>
-  </div>
-  <div class="cover">
-    <img src="" alt="cover" width="100%" class="coverURL" style="display: none;">
   </div>
 </main>
 
 <%- include("./partials/footer.ejs") %>
 <script>
-  const element = document.querySelector(".isbn");
-  element.addEventListener('input', async (event) => {
-    document.querySelector(".coverURL").style.display = "block";
-    const query = event.target.value;
-    const cover_url = `https://covers.openlibrary.org/b/isbn/${query}-L.jpg`;
-    const amazon_link = `https://www.amazon.in/s?k=${query}&i=stripbooks&ref=nb_sb_noss`;
-    document.querySelector(".coverURL").setAttribute("src", cover_url);
-    document.querySelector(".url").value = amazon_link;
-    document.querySelector(".coverURL").onerror = function() {
-      this.style.display = "none";
+  const imageUploadButton = document.querySelector('.poster-upload');
+  const imgPreviewBlock = document.querySelector('.coverURL');
+  const isbnInput = document.querySelector('.isbn');
+  const amazonLinkInput = document.querySelector('.url');
+  const hiddenUploadButton = document.querySelector('.uploadButton')
+  isbnInput.addEventListener('input', event => {
+    const isbn = event.target.value.trim();
+    if (!isbn) {
+      imgPreviewBlock.style.display = 'none';
+      imageUploadButton.style.display = 'flex';
+      return;
     }
+    const coverURL = `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg`;
+    const amazonURL = `https://www.amazon.in/s?k=${isbn}&i=stripbooks&ref=nb_sb_noss`;
+    imgPreviewBlock.setAttribute('src', coverURL);
+    amazonLinkInput.value = amazonURL;
+
+    imgPreviewBlock.onload = () => {
+      if (imgPreviewBlock.naturalWidth <= 1 && imgPreviewBlock.naturalHeight <= 1) {
+        imgPreviewBlock.style.display = 'none';
+        imageUploadButton.style.display = 'flex';
+      } else {
+        imgPreviewBlock.style.display = 'block';
+        imageUploadButton.style.display = 'none';
+      }
+      return;
+    };
+    coverImg.onerror = () => {
+      imgPreviewBlock.style.display = 'none';
+      imageUploadButton.style.display = 'flex';
+    };
   });
-  window.onload = function() {
 
+  function uploadImage() {
+    hiddenUploadButton.click();
   }
-  document.querySelector("#link1").textContent = "Logout";
-  document.querySelector('#link1').setAttribute("href", "/logout");
-  document.querySelector('footer p span').style.display = "none";
+  // Additional setup on window load
+  window.onload = function() {
+    const link1 = document.querySelector('#link1');
+    if (link1) {
+      link1.textContent = 'Logout';
+      link1.setAttribute('href', '/logout');
+    }
+    const footerSpan = document.querySelector('footer p span');
+    if (footerSpan) {
+      footerSpan.style.display = 'none';
+    }
+  };
 
+  function previewImage(event) {
+    const file = event.target.files[0];
+    console.log(file)
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        imgPreviewBlock.src = e.target.result;
+        imgPreviewBlock.style.display = 'block';
+        imageUploadButton.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    } else {
+      imgPreviewBlock.src = '';
+      imgPreviewBlock.style.display = 'none';
+    }
+  }
+
+  // Assuming you have an input for file upload
+  document.querySelector('.file-upload').addEventListener('change', previewImage);
 </script>

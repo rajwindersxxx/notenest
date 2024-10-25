@@ -1,7 +1,7 @@
 
 # My files
 secret.txt
-
+./public/src/usersUploads/*
 # Logs
 logs
 *.log

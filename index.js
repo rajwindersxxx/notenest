@@ -8,10 +8,13 @@ import bcrypt from "bcrypt";
 import session from "express-session";
 import passport from "passport";
 import { Strategy } from "passport-local";
+import multer from "multer";
+import path from "path";
 const app = express();
-const port = 3000;
+const port = 3001;
 const saltRounds = 10;
 env.config();
+
 
 app.use(
   session({
@@ -38,12 +41,23 @@ const db = new pg.Client({
 });
 db.connect();
 
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/usersUploads')
+  },
+  filename: function (req, file, cb) {
+    // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    cb(null, `${req.body.isbn}` + path.extname(file.originalname)); // Create the custom filename
+  }
+})
+
+const upload = multer({ storage: storage })
+
 let data;
 
 //routs to index , login , signup page
 app.get("/", async (req, res) => {
   await fetchData();
-  
   res.render("index.ejs", { data: data });
 });
 
@@ -57,9 +71,8 @@ app.get("/signup", (req, res) => {
 
 //user home page
 app.get("/home", async (req, res) => {
-  
   if (req.isAuthenticated()) {
-    console.log(req.user.id);
+    // console.log(req.user.id);
     const result = await db.query(
       `SELECT notebook.*, users.first_name ,users.last_name , TO_CHAR(notebook.date, 'YYYY-MM-DD') AS date
        FROM notebook
@@ -162,7 +175,7 @@ passport.use(
   })
 );
 
-app.post("/add", async (req, res) => {
+app.post("/add", upload.single('coverImage'),async (req, res) => {
   const book_name = req.body.name;
   const isbn_code = req.body.isbn;
   const rating = req.body.rating;
@@ -171,15 +184,19 @@ app.post("/add", async (req, res) => {
   const book_url = req.body.URL;
   const user_id = req.user.id;
   const date = currentDate();
+
   try {
     await db.query(
       "INSERT INTO notebook (book_title, isbn_code , rating, book_url, note, summary, date, user_id) VALUES ($1,$2,$3,$4, $5, $6, $7, $8)",
       [book_name, isbn_code, rating, book_url, note, summary, date, user_id]
     );
-    await download(
-      `https://covers.openlibrary.org/b/isbn/${isbn_code}-L.jpg`,
-      `./public/src/images/${isbn_code}.jpg`
-    );
+    console.log(req.file)
+    if (!req.file) {
+      await download(
+        `https://covers.openlibrary.org/b/isbn/${isbn_code}-L.jpg`,
+        `./public/usersUploads/${isbn_code}.jpg`
+      );
+    }
     res.redirect("/home");
   } catch (error) {
     console.log(error.message);
@@ -187,7 +204,7 @@ app.post("/add", async (req, res) => {
   }
 });
 
-app.post("/update" , async (req, res) =>{
+app.post("/update", async (req, res) => {
   const book_name = req.body.name;
   const isbn_code = req.body.isbn;
   const rating = req.body.rating;
@@ -200,11 +217,21 @@ app.post("/update" , async (req, res) =>{
   try {
     await db.query(
       "UPDATE notebook SET book_title = $1, isbn_code = $2, rating = $3, book_url = $4, note = $5, summary = $6, date = $7, user_id = $8 WHERE id = $9",
-      [book_name, isbn_code, rating, book_url, note, summary, date, user_id, note_id]
-    );    
+      [
+        book_name,
+        isbn_code,
+        rating,
+        book_url,
+        note,
+        summary,
+        date,
+        user_id,
+        note_id,
+      ]
+    );
     await download(
       `https://covers.openlibrary.org/b/isbn/${isbn_code}-L.jpg`,
-      `./public/src/images/${isbn_code}.jpg`
+      `./public/usersUploads/${isbn_code}.jpg`
     );
     res.redirect("/home");
   } catch (error) {
@@ -221,7 +248,7 @@ app.get("/view", async (req, res) => {
 
 app.get("/sort", async (req, res) => {
   const query = req.query.by;
-  console.log(query);
+  // console.log(query);
   if (query == "title") {
     await fetchSortedData("book_title", "ASC");
   } else if (query == "newest") {
@@ -235,12 +262,13 @@ app.get("/sort", async (req, res) => {
 app.get("/sortuser", async (req, res) => {
   const query = req.query.by;
   const userId = req.user.id;
-  console.log(query);
+  // console.log(query);
   if (query == "title") {
     await fetchSortedDataUser("book_title", "ASC", userId);
   } else if (query == "newest") {
     await fetchSortedDataUser("date", "DESC", userId);
   } else if (query == "best") {
+    download;
     await fetchSortedDataUser("rating", "DESC", userId);
   }
   res.render("home.ejs", { data: data, user: req.user });
@@ -248,19 +276,20 @@ app.get("/sortuser", async (req, res) => {
 app.post("/edit", async (req, res) => {
   const id = req.body.id;
   const action = req.body.action;
-  console.log(id, action);
-  if(req.isAuthenticated()) {
+  if (req.isAuthenticated()) {
     switch (action) {
       case "edit":
-        const result = await db.query("SELECT * FROM notebook WHERE id = $1", [id]);
-        res.render("edit.ejs", {data: result.rows})
+        const result = await db.query("SELECT * FROM notebook WHERE id = $1", [
+          id,
+        ]);
+        res.render("edit.ejs", { data: result.rows });
         break;
       case "delete":
         await db.query("DELETE FROM notebook where id = $1", [id]);
         res.redirect("/home");
         break;
     }
-  }else{
+  } else {
     res.redirect("/login");
   }
 });
@@ -308,18 +337,7 @@ async function fetchIdData(id) {
     console.log(error.message);
   }
 }
-//fetch data using email
-async function fetchEmailData(email) {
-  try {
-    const result = await db.query(
-      "SELECT id , book_title ,isbn_code, rating, book_url, note , summary , TO_CHAR(date, 'YYYY-MM-DD') AS date FROM notebook WHERE email = $1",
-      [email]
-    );
-    data = result.rows;
-  } catch (error) {
-    console.log(error.message);
-  }
-}
+
 //fetch sorted all data
 async function fetchSortedData(query, sort) {
   try {
