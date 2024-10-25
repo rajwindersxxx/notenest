@@ -37,6 +37,9 @@ const db = new pg.Client({
   database: process.env.PG_DATABASE,
   password: process.env.PG_PASSWORD,
   port: process.env.PG_PORT,
+  ssl: {
+    rejectUnauthorized: false, // Use true if you have a verified certificate
+  },
 });
 db.connect();
 const maxSize = 100 * 1024;
@@ -61,8 +64,8 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const message = req.query.message || '';
-  res.render('login.ejs', { message });
+  const message = req.query.message || "";
+  res.render("login.ejs", { message });
 });
 
 app.get("/signup", (req, res) => {
@@ -91,7 +94,8 @@ app.post(
   "/login",
   passport.authenticate("local", {
     successRedirect: "/home",
-    failureRedirect: "/login?message=username or password is incorrect , try again",
+    failureRedirect:
+      "/login?message=username or password is incorrect , try again",
   })
 );
 
@@ -215,15 +219,7 @@ app.post("/update", async (req, res) => {
   try {
     await db.query(
       "UPDATE notebook SET  rating = $1, book_url = $2, note = $3, summary = $4, date = $5, user_id = $6 WHERE id = $7",
-      [
-        rating,
-        book_url,
-        note,
-        summary,
-        date,
-        user_id,
-        note_id,
-      ]
+      [rating, book_url, note, summary, date, user_id, note_id]
     );
     res.redirect("/home");
   } catch (error) {
